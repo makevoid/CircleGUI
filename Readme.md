@@ -19,3 +19,15 @@ Shoes: http://shoesrb.com
 $ shoes ccmenu.rb
 ```
 
+### Features
+
+- Plays a sound when build status changes
+- Displays latest builds
+- Auto refreshes every x seconds
+
+### TODO
+
+- icon
+- put it in the status bar
+- port to gjs 
+
