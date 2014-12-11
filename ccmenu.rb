@@ -110,22 +110,11 @@ else
   Shoes.app title: "CCMenu" do
 
     puts "starting"
-    # background "#DDD"
     fill "#FFF"
     strokewidth 0
     cap :curve
-    # rect 10, 10, 500, 20
-
 
     stack margin: 10 do
-      # caption "Current CI status:"
-      # para "Green | Red ?"
-      # flow do
-      #   para ">>>>"
-      #   para ">>>>>"
-      #   @progress_bar = progress left: 10, top: 300
-      #   @progress_bar.fraction = 0.4
-      # end
       @last_build = stack { }
       @slot = stack { }
       @changes = false
@@ -140,16 +129,6 @@ else
           sleep 10
         end
       end
-
-      # button("Show token") do
-      #   alert "Circle token:\n#{Circle::ACCESS_TOKEN}"
-      # end
-
-      # button("Check") do
-      #   builds = Circle.builds
-      #   debug builds
-      #   alert("Result: #{builds}")
-      # end
     end
 
     def get_status(builds)
@@ -169,7 +148,6 @@ else
 
       @slot.clear
       builds.each do |build|
-        # debug build.inspect
         @slot.append do
           stack margin: 8 do
             background white
@@ -179,10 +157,8 @@ else
               para "         "
               id = para "##{build.id}"
               para "   "
-              #id.style width: 50
               author = para build.author
               para "   "
-              #author.style width: 50
               para build.build_time_human
               para "   "
               if build.finished_at
@@ -195,9 +171,6 @@ else
               button("open") do
                 puts `#{BROWSER} #{build.build_url}`
               end
-              # button("gh") do
-              #   puts `#{BROWSER} #{build.compare_url}` if build.compare_url
-              # end
               stack do
                 para build.subject
               end
@@ -211,34 +184,3 @@ else
   end # Shoes
 
 end
-
-####
-
-
-
-# require 'circleci'
-
-# class Circle
-#   ACCESS_TOKEN = File.read( File.expand_path "~/.circle_ci" ).strip
-
-#   def initialize
-#     configure
-#   end
-
-#   def configure
-#     CircleCi.configure do |config|
-#       config.token = ACCESS_TOKEN
-#     end
-#   end
-
-#   def builds
-
-#   end
-# end
-
-###
-
-# circle = Circle.new
-# circle.builds.each do |build|
-#   puts build.inspect
-# end
