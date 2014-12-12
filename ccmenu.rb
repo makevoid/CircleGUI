@@ -2,10 +2,6 @@
 
 # Shoes.show_log
 
-require 'net/http'
-require 'json'
-require 'time'
-
 require_relative 'config/env'
 
 
@@ -36,7 +32,7 @@ else
 
       Thread.new do
         while true
-          repaint_slot
+          refresh_builds!
 
           `aplay ding.wav` if @changes
           @changes = false
@@ -49,7 +45,7 @@ else
       builds.map{ |b| { id: b.id, status: b.status } }
     end
 
-    def repaint_slot
+    def refresh_builds!
       # puts "repainting"
 
       circle = Circle.new
@@ -84,6 +80,13 @@ else
               para "   "
               button("open") do
                 puts `#{BROWSER} #{build.build_url}`
+              end
+              button("run") do
+                Circle.new.run build.id
+              end
+              button("cancel") do
+                Circle.new.cancel build.id
+                refresh_builds!
               end
               stack do
                 para build.subject

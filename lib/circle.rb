@@ -3,14 +3,28 @@ class Circle
     new.builds
   end
 
-  ACCESS_TOKEN = CIRCLE_ACCESS_TOKEN
-  # URL = "https://circleci.com/api/v1/me?circle-token=#{ACCESS_TOKEN}"
-  URL = "https://circleci.com/api/v1/project/quillcontent/wms?circle-token=#{ACCESS_TOKEN}&limit=10&offset=0"
+  ENDPOINT = "https://circleci.com/api/v1/project"
 
+  ACCESS_TOKEN  = CIRCLE_ACCESS_TOKEN
+  PROJECT       = CIRCLE_CURRENT_PROJECT
+
+  # URL_ME = "https://circleci.com/api/v1/me?circle-token=#{ACCESS_TOKEN}"
+  URL_BUILDS = "#{ENDPOINT}/#{PROJECT}?circle-token=#{ACCESS_TOKEN}&limit=10&offset=0"
+  URL_RUN    = "#{ENDPOINT}/#{PROJECT}/%s/retry?circle-token=#{ACCESS_TOKEN}"
+  URL_CANCEL = "#{ENDPOINT}/#{PROJECT}/%s/cancel?circle-token=#{ACCESS_TOKEN}"
+
+  def run(build_num)
+    url_run = URL_RUN % build_num.to_s
+    post_json url_run
+  end
+
+  def cancel(build_num)
+    url_run = URL_CANCEL % build_num.to_s
+    post_json url_run
+  end
 
   def builds
-    resp = Net::HTTP.get_response URI.parse URL
-    builds = JSON.parse resp.body
+    builds = get_json URL_BUILDS
 
     builds.map do |build|
       stop_time   = build["stop_time"]
@@ -44,4 +58,27 @@ class Circle
               )
     end.sort_by{ |b| -b.id }
   end
+
+
+  private
+
+  def get_json(url)
+    # puts "GET #{url}"
+    resp = Net::HTTP.get_response URI.parse url
+    JSON.parse resp.body
+  end
+
+  def post_json(url)
+    puts "POST #{url}"
+    uri  = URI.parse url
+    resp = Net::HTTP.post_form uri, { "circle-token" => ACCESS_TOKEN }
+    JSON.parse resp.body
+  end
+
 end
+
+# Example using run
+#
+#
+# puts Circle.new.run 1270
+#
